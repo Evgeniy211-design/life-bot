@@ -9,6 +9,8 @@ from contextlib import closing
 from datetime import datetime
 
 from aiogram import Bot, Dispatcher, F
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
@@ -702,7 +704,7 @@ async def main():
         from aiogram.client.session.aiohttp import AiohttpSession
 
         session = AiohttpSession(proxy=PROXY)
-    bot = Bot(TOKEN, session=session) if session else Bot(TOKEN)
+    bot = Bot(TOKEN, session=session, default=DefaultBotProperties(parse_mode=ParseMode.HTML)) if session else Bot(TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     asyncio.create_task(life_tick(bot))
     await dp.start_polling(bot)
 
