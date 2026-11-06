@@ -1,0 +1,7 @@
+runtime: python-3.12
+
+build:
+  - pip install -r requirements.txt
+
+run:
+  - python game.py
