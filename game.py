@@ -4,6 +4,7 @@ import os
 import random
 import secrets
 import sqlite3
+from aiohttp import web
 from contextlib import closing
 from datetime import datetime
 
@@ -675,10 +676,27 @@ async def process_tick(bot: Bot):
                 pass
 
 
+async def health_server():
+    port = int(os.getenv("PORT", "8080"))
+
+    async def handle(request):
+        return web.json_response({"status": "ok", "bot": "Mylife game"})
+
+    app = web.Application()
+    app.router.add_get("/", handle)
+    app.router.add_get("/health", handle)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", port)
+    await site.start()
+    print(f"Health server on 0.0.0.0:{port}", flush=True)
+
+
 async def main():
     if not TOKEN:
         raise SystemExit("Не задан BOT_TOKEN. Укажите переменную окружения BOT_TOKEN.")
     init_db()
+    await health_server()
     session = None
     if PROXY:
         from aiogram.client.session.aiohttp import AiohttpSession
